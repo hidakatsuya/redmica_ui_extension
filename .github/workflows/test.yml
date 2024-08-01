@@ -33,8 +33,13 @@ jobs:
           path: /usr/src/redmine/tmp/screenshots
           retention-days: 1
       - name: Test RedMica
+        id: redmica-test
         run: cd /usr/src/redmine; RAILS_ENV=test bundle exec rake test
         continue-on-error: true
+      - name: Show RedMica test failure in the Job Summary
+        if: ${{ steps.redmica-test.outcome == 'failure' }}
+        run: |
+          echo ":warning: RedMica test failed" >> $GITHUB_STEP_SUMMARY
 
   test-mysql:
     strategy:
@@ -65,8 +70,13 @@ jobs:
           path: /usr/src/redmine/tmp/screenshots
           retention-days: 1
       - name: Test RedMica
+        id: redmica-test
         run: cd /usr/src/redmine; RAILS_ENV=test bundle exec rake test
         continue-on-error: true
+      - name: Show RedMica test failure in the Job Summary
+        if: ${{ steps.redmica-test.outcome == 'failure' }}
+        run: |
+          echo ":warning: RedMica test failed" >> $GITHUB_STEP_SUMMARY
 
   test-sqlite:
     strategy:
@@ -94,3 +104,8 @@ jobs:
       - name: Test RedMica
         run: cd /usr/src/redmine; RAILS_ENV=test bundle exec rake test
         continue-on-error: true
+      - name: Show RedMica test failure in the Job Summary
+        id: redmica-test
+        if: ${{ steps.redmica-test.outcome == 'failure' }}
+        run: |
+          echo ":warning: RedMica test failed" >> $GITHUB_STEP_SUMMARY
