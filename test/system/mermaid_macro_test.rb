@@ -81,4 +81,16 @@ class MermaidMacroTest < PlaywrightSystemTestCase
       assert_not_equal '0', first('.mermaid svg .node foreignObject')['width']
     end
   end
+
+  def test_mermaid_macro_has_non_zero_size
+    log_user('admin', 'admin')
+    issue = Issue.find(1)
+    issue.journals.first.update(notes: "{{mermaid\ngraph TD;\nA-->B;\nA-->C;\nB-->D;\nC-->D;\n}}")
+    visit "/issues/#{issue.id}?tab=notes"
+
+    assert_selector 'div.mermaid svg'
+
+    svg = find("div.mermaid svg")
+    assert svg.visible?, "SVG should be visible but it's not."
+  end
 end
